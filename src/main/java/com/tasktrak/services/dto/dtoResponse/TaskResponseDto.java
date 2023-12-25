@@ -1,16 +1,19 @@
-package com.tasktrak.services.dto.dtoResponce;
+package com.tasktrak.services.dto.dtoResponse;
 
 import com.tasktrak.services.interfaces.UserDto;
+import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 
-/**
- * DTO for {@link com.tasktrak.entities.Task}
- */
-public record TaskResponceDto(Long id, String title, String description, LocalDate creationDate, LocalDate dueDate,
-                              boolean completed, Set<String> tags, Long assignedUserResponceDtoId,
-                              String assignedUserResponceDtoUsername, boolean assignedUserResponceDtoIsManager,
-                              UserDto createdByUser) implements Serializable {
+
+@Data
+public class TaskResponseDto{
+    private String title;
+    private  String description;
+    private  LocalDate creationDate;
+    private  LocalDate dueDate;
+
+//    UserDto createdByUser;
 }

@@ -1,2 +1,4 @@
-package com.tasktrak.repositories;public interface TaskModificationRequestRepository {
+package com.tasktrak.repositories;
+
+public interface TaskModificationRequestRepository {
 }
