@@ -56,7 +56,7 @@ public class User {
             lastModificationRequsetDate = today;
         }
         // Check if the user can make another modification today
-        return tokensForTaskModification > 0;
+            return tokensForTaskModification > 0;
     }
 
     public boolean canDeleteTask() {
@@ -68,6 +68,10 @@ public class User {
         }
         // Check if the user can make another modification today
         return tokensForTaskDeletion > 0;
+    }
+    public void doubleTheModificationTokensStock(){
+        this.setTokensForTaskModification(2);
+
     }
 
 }

@@ -2,7 +2,9 @@ package com.tasktrak.services;
 
 import com.tasktrak.entities.Task;
 import com.tasktrak.entities.User;
+import com.tasktrak.repositories.TaskModificationRequestRepository;
 import com.tasktrak.repositories.TaskRepository;
+import com.tasktrak.repositories.UserRepository;
 import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
 import com.tasktrak.services.interfaces.ITaskService;
@@ -10,17 +12,27 @@ import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 @Service
 public class TaskServiceImpl implements ITaskService {
+    TaskModificationRequestRepository taskModificationRequestRepository;
 
     private TaskRepository taskRepository;
     private final ModelMapper modelMapper;
-    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper) {
+    private final UserRepository userRepository;
+
+    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper,
+                           UserRepository userRepository,TaskModificationRequestRepository taskModificationRequestRepository) {
         this.taskRepository = taskRepository;
         this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
+        this.taskModificationRequestRepository = taskModificationRequestRepository;
     }
     @Override
     public TaskResponseDto addTask(TaskRequestDto taskRequestDto) {
@@ -79,5 +91,21 @@ public class TaskServiceImpl implements ITaskService {
 
     private boolean shedulingDateIsLessthenThreeDays(LocalDate creationDate, LocalDate dueDate) {
         return dueDate.minusDays(3).isBefore(creationDate);
+    }
+    @Scheduled(fixedRate = 86400000) // Run every 24 hours (24 * 60 * 60 * 1000 milliseconds)
+    public void simulateDailyTasks() {
+        // Iterate through tasks or users and apply logic
+//        for (User user : userRepository.getAllUsers()) {
+//            // Check if 24 hours have passed since the last modification request
+//            if (user.shouldGrantDoubleTokens()) {
+//                user.grantDoubleTokenBalance();
+//            }
+//        }
+        taskModificationRequestRepository.findAll().stream()
+                .filter(r-> Duration.between(r.getRequestDate(), LocalDate.now()).toHours() > 12)
+                .forEach(r ->{
+                    r.getRequestingUser().doubleTheModificationTokensStock();
+                    userRepository.save(r.getRequestingUser());
+                });
     }
 }

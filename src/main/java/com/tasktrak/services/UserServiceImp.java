@@ -13,9 +13,8 @@ public class UserServiceImp implements UserService {
         this.userRepository=userRepository;
     }
     public User getUserById(Long id){
-        return userRepository.findUserById(id);
+        return userRepository.getReferenceById(id);
     }
-
     public Optional<User> findUserById(Long id) {
        return userRepository.findById(id);
     }
