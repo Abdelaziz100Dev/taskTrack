@@ -55,12 +55,14 @@ public class User {
             tokensForTaskModification = 2;
             lastModificationRequsetDate = today;
         }
+        // Check if the user can make another modification today
+        return tokensForTaskModification > 0;
     }
 
     public boolean canDeleteTask() {
         LocalDate today = LocalDate.now();
 
-        if (!today.isAfter(lastDeletionDate.plusMonths(1))) {
+        if (today.isAfter(lastDeletionDate.plusMonths(1))) {
             tokensForTaskDeletion = 1;
             lastDeletionDate = today;
         }

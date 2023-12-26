@@ -1,6 +1,7 @@
 package com.tasktrak.services;
 
 import com.tasktrak.entities.Task;
+import com.tasktrak.entities.User;
 import com.tasktrak.repositories.TaskRepository;
 import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
@@ -48,8 +49,17 @@ public class TaskServiceImpl implements ITaskService {
     @Override
     public ResponseEntity<String> deleteTask(Long id) {
         verifyIfTaskCanBeDeleted(id);
+        Task task = taskRepository.findById(id).get();
+        User AssignedToUser = task.getAssignedToUser();
+
         try {
-            taskRepository.deleteById(id);
+            if(!task.getAssignedByUser().isManager())taskRepository.deleteById(id);
+            if(task.getAssignedByUser().isManager()){
+                taskRepository.deleteById(id);
+                task.getAssignedToUser().decrementTokensForTaskDeletion();
+            }
+            AssignedToUser.updateDeletionRequestDate();
+
             return ResponseEntity.status(HttpStatus.OK).body("Task deleted successfully");
         } catch (EmptyResultDataAccessException e) {
             // Handle the case where the competition with the given ID is not found
@@ -62,9 +72,12 @@ public class TaskServiceImpl implements ITaskService {
 
     private void verifyIfTaskCanBeDeleted(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
-        if (task.isCompleted()) throw new IllegalArgumentException("Task is already completed");
-        if (task.getDueDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Task is overdue");
+//        if (task.isCompleted()) throw new IllegalArgumentException("Task is already completed");
+//        if (task.getDueDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Task is overdue");
+
         if(!task.getAssignedToUser().canDeleteTask()) throw new IllegalArgumentException("User is not allowed to delete task");
+        if(task.isReplaced())throw new IllegalArgumentException("Task is not allowed to delete ");
+
     }
 
     private boolean shedulingDateIsLessthenThreeDays(LocalDate creationDate, LocalDate dueDate) {
