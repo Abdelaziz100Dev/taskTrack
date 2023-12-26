@@ -1,4 +1,4 @@
-package com.tasktrak.services.interfaces;
+package com.tasktrak.services.dto.dtoResponse;
 
 import java.io.Serializable;
 

@@ -25,12 +25,17 @@ public class Task {
     private LocalDate creationDate;
     private LocalDate dueDate;
     private boolean completed;
+    private boolean replaced;
 
     @ElementCollection
     private Set<String> tags;
 
     @ManyToOne
-    private User assignedUser;
+    private User assignedByUser;
+
+    @ManyToOne
+    @JoinColumn(name = "assignedToUser_id")
+    private User assignedToUser;
 
     @ManyToOne
     private User createdByUser;

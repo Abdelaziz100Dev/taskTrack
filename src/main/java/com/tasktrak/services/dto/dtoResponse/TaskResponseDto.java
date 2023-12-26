@@ -1,11 +1,8 @@
 package com.tasktrak.services.dto.dtoResponse;
 
-import com.tasktrak.services.interfaces.UserDto;
 import lombok.Data;
 
-import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.Set;
 
 
 @Data
