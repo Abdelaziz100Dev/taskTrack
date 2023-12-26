@@ -28,7 +28,7 @@ public class TaskModificationRequest {
         @ManyToOne
         private User requestingUser;
 
-        private boolean managerApproval;
+        private boolean accepted;
         private LocalDateTime requestDate;
 
 

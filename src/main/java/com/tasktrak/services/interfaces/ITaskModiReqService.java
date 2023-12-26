@@ -9,4 +9,6 @@ import java.rmi.ServerException;
 public interface ITaskModiReqService {
 
     TaskModiReqResponseDto creatDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException;
+
+    void acceptDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException;
 }

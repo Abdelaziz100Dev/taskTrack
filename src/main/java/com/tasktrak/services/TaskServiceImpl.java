@@ -72,9 +72,6 @@ public class TaskServiceImpl implements ITaskService {
 
     private void verifyIfTaskCanBeDeleted(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
-//        if (task.isCompleted()) throw new IllegalArgumentException("Task is already completed");
-//        if (task.getDueDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Task is overdue");
-
         if(!task.getAssignedToUser().canDeleteTask()) throw new IllegalArgumentException("User is not allowed to delete task");
         if(task.isReplaced())throw new IllegalArgumentException("Task is not allowed to delete ");
 

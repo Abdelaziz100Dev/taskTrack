@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class TaskModiReqRequestDto {
+    private Long id;
     private Task originalTask;
     private Task newTask;
     private User requestingUser;

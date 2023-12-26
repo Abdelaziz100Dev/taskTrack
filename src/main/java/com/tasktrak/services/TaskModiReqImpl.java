@@ -4,9 +4,9 @@ import com.tasktrak.entities.TaskModificationRequest;
 import com.tasktrak.entities.User;
 import com.tasktrak.repositories.TaskModificationRequestRepository;
 import com.tasktrak.repositories.TaskRepository;
+import com.tasktrak.repositories.UserRepository;
 import com.tasktrak.services.dto.dtoRequest.TaskModiReqRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskModiReqResponseDto;
-import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
 import com.tasktrak.services.interfaces.ITaskModiReqService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -18,36 +18,18 @@ public class TaskModiReqImpl implements ITaskModiReqService {
     TaskModificationRequestRepository taskModificationRequestRepository;
     TaskRepository taskRepository;
     private final ModelMapper modelMapper;
+    private final UserRepository userRepository;
 
 
-    public TaskModiReqImpl(TaskModificationRequestRepository taskModificationRequestRepository,TaskRepository taskRepository, ModelMapper modelMapper) {
+    public TaskModiReqImpl(TaskModificationRequestRepository taskModificationRequestRepository,TaskRepository taskRepository, ModelMapper modelMapper,
+                           UserRepository userRepository) {
         this.taskRepository = taskRepository;
         this.taskModificationRequestRepository = taskModificationRequestRepository;
         this.modelMapper = modelMapper;
+        this.userRepository = userRepository;
     }
     @Override
     public TaskModiReqResponseDto creatDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException {
-
-//        Task task =   taskModiReqRequestDto.getOriginalTask();
-//        Task originalTask = taskRepository.getById(task.getId());
-//        Task newTask = taskRepository.getById(taskModiReqRequestDto.getNewTask().getId());
-//        User AssignedToUser = originalTask.getAssignedToUser();
-//        User userAssignedThisTask = originalTask.getAssignedToUser();
-//
-//
-//        AssignedToUser.decrementTokensForTaskModification();
-//
-//        boolean b = AssignedToUser.canMakeModification();
-//        boolean b1 = userAssignedThisTask.isManager();
-//
-//        if (b && b1) {
-//            AssignedToUser.getTasksAssigned().add(newTask);
-//            AssignedToUser.getTasksAssigned().remove(originalTask);
-//            AssignedToUser.updateModificationDate();
-//
-//            taskModificationRequestRepository.save(taskModiReqRequestDto);
-//        }
-//        return modelMapper.map(task, TaskResponseDto.class);
         Task task =   taskModiReqRequestDto.getOriginalTask();
         Task originalTask = taskRepository.getReferenceById(task.getId());
         Task newTask = taskRepository.getReferenceById(taskModiReqRequestDto.getNewTask().getId());
@@ -77,4 +59,27 @@ public class TaskModiReqImpl implements ITaskModiReqService {
         }
     }
 
+    @Override
+    public void acceptDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException {
+        TaskModificationRequest taskModificationRequest = taskModificationRequestRepository.findById(taskModiReqRequestDto.getId()).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        Task originalTask = taskModificationRequest.getOriginalTask();
+        Task newTask = taskModificationRequest.getNewTask();
+        User userHaveTask = originalTask.getAssignedToUser();
+
+        User randomUser = userRepository.getReferenceById(userHaveTask.getId()- 1);
+
+            userHaveTask.getTasksAssigned().remove(originalTask);
+            userHaveTask.getTasksAssigned().add(newTask);
+            newTask.setAssignedToUser(userHaveTask);
+            originalTask.setAssignedToUser(randomUser);
+
+            userRepository.save(userHaveTask);
+            taskRepository.save(originalTask);
+            taskRepository.save(newTask);
+
+            originalTask.setReplaced(true);
+            newTask.setReplaced(true);
+            taskModificationRequest.setAccepted(true);
+            taskModificationRequestRepository.save(taskModificationRequest);
+    }
 }
