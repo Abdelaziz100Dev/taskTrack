@@ -1,5 +1,4 @@
 package com.tasktrak.services;
-
 import com.tasktrak.entities.Task;
 import com.tasktrak.entities.TaskModificationRequest;
 import com.tasktrak.entities.User;
@@ -49,13 +48,11 @@ public class TaskModiReqImpl implements ITaskModiReqService {
 //            taskModificationRequestRepository.save(taskModiReqRequestDto);
 //        }
 //        return modelMapper.map(task, TaskResponseDto.class);
-
         Task task =   taskModiReqRequestDto.getOriginalTask();
         Task originalTask = taskRepository.getReferenceById(task.getId());
         Task newTask = taskRepository.getReferenceById(taskModiReqRequestDto.getNewTask().getId());
         User AssignedToUser = originalTask.getAssignedToUser();
         User userAssignedThisTask = originalTask.getAssignedToUser();
-
 
         AssignedToUser.decrementTokensForTaskModification();
 

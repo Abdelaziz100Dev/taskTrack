@@ -24,7 +24,8 @@ public class User {
     private int tokensForTaskModification;
     private int tokensForTaskDeletion;
 
-    private LocalDate lastModificationDate;
+    private LocalDate lastModificationRequsetDate;
+    private LocalDate lastDeletionDate;
 
     private boolean isManager;
     @ManyToOne
@@ -34,23 +35,37 @@ public class User {
     private List<Task> tasksAssigned;
 
     public void updateModificationRequestDate() {
-        this.lastModificationDate = LocalDate.now();
+        this.lastModificationRequsetDate = LocalDate.now();
+    }
+    public void updateDeletionRequestDate() {
+        this.lastDeletionDate = LocalDate.now();
     }
 
     public void decrementTokensForTaskModification() {
         this.tokensForTaskModification--;
     }
+    public void decrementTokensForTaskDeletion() {
+        this.tokensForTaskDeletion--;
+    }
 
     public boolean canMakeRequestForModification() {
         LocalDate today = LocalDate.now();
 
-        if (!today.equals(lastModificationDate)) {
+        if (!today.equals(lastModificationRequsetDate)) {
             tokensForTaskModification = 2;
-            lastModificationDate = today;
+            lastModificationRequsetDate = today;
         }
+    }
 
+    public boolean canDeleteTask() {
+        LocalDate today = LocalDate.now();
+
+        if (!today.isAfter(lastDeletionDate.plusMonths(1))) {
+            tokensForTaskDeletion = 1;
+            lastDeletionDate = today;
+        }
         // Check if the user can make another modification today
-        return tokensForTaskModification > 0;
+        return tokensForTaskDeletion > 0;
     }
 
 }

@@ -7,4 +7,5 @@ import org.springframework.http.ResponseEntity;
 public interface ITaskService {
     TaskResponseDto addTask(TaskRequestDto taskDtoRequest);
     String markTaskAsDone(Long id);
+    ResponseEntity<String> deleteTask(Long id);
 }

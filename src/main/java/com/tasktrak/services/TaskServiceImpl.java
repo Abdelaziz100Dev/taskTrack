@@ -6,6 +6,7 @@ import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
 import com.tasktrak.services.interfaces.ITaskService;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -42,6 +43,28 @@ public class TaskServiceImpl implements ITaskService {
         task.setCompleted(true);
         taskRepository.save(task);
         return "Task marked as done" ;
+    }
+
+    @Override
+    public ResponseEntity<String> deleteTask(Long id) {
+        verifyIfTaskCanBeDeleted(id);
+        try {
+            taskRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.OK).body("Task deleted successfully");
+        } catch (EmptyResultDataAccessException e) {
+            // Handle the case where the competition with the given ID is not found
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Task not found");
+        } catch (Exception e) {
+            // Handle other exceptions
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during task deletion");
+        }
+    }
+
+    private void verifyIfTaskCanBeDeleted(Long id) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
+        if (task.isCompleted()) throw new IllegalArgumentException("Task is already completed");
+        if (task.getDueDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Task is overdue");
+        if(!task.getAssignedToUser().canDeleteTask()) throw new IllegalArgumentException("User is not allowed to delete task");
     }
 
     private boolean shedulingDateIsLessthenThreeDays(LocalDate creationDate, LocalDate dueDate) {
