@@ -7,17 +7,17 @@ import com.tasktrak.repositories.TaskRepository;
 import com.tasktrak.repositories.UserRepository;
 import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
+import com.tasktrak.services.dto.dtoResponse.UserAndTasksDto;
 import com.tasktrak.services.interfaces.ITaskService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class TaskServiceImpl implements ITaskService {
@@ -92,20 +92,27 @@ public class TaskServiceImpl implements ITaskService {
     private boolean shedulingDateIsLessthenThreeDays(LocalDate creationDate, LocalDate dueDate) {
         return dueDate.minusDays(3).isBefore(creationDate);
     }
-    @Scheduled(fixedRate = 86400000) // Run every 24 hours (24 * 60 * 60 * 1000 milliseconds)
-    public void simulateDailyTasks() {
-        // Iterate through tasks or users and apply logic
-//        for (User user : userRepository.getAllUsers()) {
-//            // Check if 24 hours have passed since the last modification request
-//            if (user.shouldGrantDoubleTokens()) {
-//                user.grantDoubleTokenBalance();
-//            }
-//        }
-        taskModificationRequestRepository.findAll().stream()
-                .filter(r-> Duration.between(r.getRequestDate(), LocalDate.now()).toHours() > 12)
-                .forEach(r ->{
-                    r.getRequestingUser().doubleTheModificationTokensStock();
-                    userRepository.save(r.getRequestingUser());
-                });
+    @Override
+    public List<UserAndTasksDto> getTasksForManager(User user){
+        User user1 = userRepository.findById(user.getId()).orElseThrow(()-> new IllegalArgumentException("not found"));
+//        boolean b = user1.isManager();
+//     List<Task> tasksList = new ArrayList<>();
+//     List<User> usersList = new ArrayList<>();
+//        usersList.add( user1.getUsers());
+//                     .stream()
+//                .forEach(u->{
+////                    List<User> usersList = new ArrayList<>();
+//                    usersList.add(u);
+////                    List<Task> tasksList = new ArrayList<>();
+//                     u.getHisTasks().stream().forEach(t-> tasksList.add(t));});
+
+        if (user1.isManager()) {
+            List<UserAndTasksDto> userAndListDtos = new ArrayList<>();
+            user1.getUsers()
+                    .stream()
+                    .forEach(u -> userAndListDtos.add(modelMapper.map(u, UserAndTasksDto.class)));
+            return userAndListDtos;
+        }else throw new IllegalArgumentException("not allowed");
+
     }
 }

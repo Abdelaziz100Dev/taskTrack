@@ -39,4 +39,13 @@ public class Task {
 
     @ManyToOne
     private User createdByUser;
+
+    public boolean isOverdue(){
+        LocalDate today = LocalDate.now();
+        return today.isAfter(this.dueDate) && !completed;
+    }
+    public void setNotComplete(){
+        this.completed = false;
+
+    }
 }

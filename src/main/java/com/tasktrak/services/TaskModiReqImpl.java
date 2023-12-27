@@ -68,8 +68,8 @@ public class TaskModiReqImpl implements ITaskModiReqService {
 
         User randomUser = userRepository.getReferenceById(userHaveTask.getId()- 1);
 
-            userHaveTask.getTasksAssigned().remove(originalTask);
-            userHaveTask.getTasksAssigned().add(newTask);
+            userHaveTask.getHisTasks().remove(originalTask);
+            userHaveTask.getHisTasks().add(newTask);
             newTask.setAssignedToUser(userHaveTask);
             originalTask.setAssignedToUser(randomUser);
 

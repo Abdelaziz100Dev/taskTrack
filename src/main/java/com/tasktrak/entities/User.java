@@ -31,8 +31,11 @@ public class User {
     @ManyToOne
     private User manager;
 
+    @OneToMany
+    private List<User> users;
+
     @OneToMany(mappedBy = "assignedToUser")
-    private List<Task> tasksAssigned;
+    private List<Task> hisTasks;
 
     public void updateModificationRequestDate() {
         this.lastModificationRequsetDate = LocalDate.now();
