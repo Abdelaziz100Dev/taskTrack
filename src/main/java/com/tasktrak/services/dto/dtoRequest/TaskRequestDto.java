@@ -1,5 +1,8 @@
 package com.tasktrak.services.dto.dtoRequest;
 
+import com.tasktrak.entities.User;
+import com.tasktrak.enums.TaskStatus;
+import com.tasktrak.services.dto.dtoResponse.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,21 +20,52 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskRequestDto{
+    private UserDto createdByUser;
+    private User assignedByUser;
+    private TaskStatus status = TaskStatus.TODO;
+
     private String title;
     private  String description;
-    private  LocalDate creationDate;
+
+    private  LocalDate creationDate = LocalDate.now();
+    private LocalDate startDate;
     private  LocalDate dueDate;
+
     private  Boolean completed;
     private Set<String> tags;
 }
 // json for this class:
 // {
-//   "title": "string",
-//   "description": "string",
-//   "creationDate": "2021-07-07",
-//   "dueDate": "2021-07-07",
-//   "completed": true,
-//   "tags": [
-//     "string"
-//   ]
-// }
+//         "createdByUser": {
+    //         "id": 1,
+    //         "firstName": "string",
+    //         "lastName": "string",
+    //         "email": "string",
+    //         "password": "string",
+    //         "role": "MANAGER",
+    //         "manager": true,
+    //         "tasks": [
+    //         null
+    //         ],
+    //         "assignedTasks": [
+    //         null
+    //         ],
+    //         "assignedByTasks": [
+    //         null
+    //         ],
+    //         "createdTasks": [
+    //         null
+    //         ],
+    //         "taskModificationRequests": [
+    //         null
+    //         ]
+//         },
+    //         "title": "string",
+    //         "description": "string",
+    //         "creationDate": "2021-08-09",
+    //         "dueDate": "2021-08-09",
+    //         "completed": true,
+    //         "tags": [
+    //         "string"
+    //         ]
+//         }

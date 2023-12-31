@@ -13,7 +13,7 @@ public class UserServiceImp implements UserService {
         this.userRepository=userRepository;
     }
     public User getUserById(Long id){
-        return userRepository.getReferenceById(id);
+        return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
     }
     public Optional<User> findUserById(Long id) {
        return userRepository.findById(id);

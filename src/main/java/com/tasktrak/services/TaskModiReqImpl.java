@@ -10,6 +10,7 @@ import com.tasktrak.services.dto.dtoResponse.TaskModiReqResponseDto;
 import com.tasktrak.services.interfaces.ITaskModiReqService;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.rmi.ServerException;
 
@@ -19,44 +20,47 @@ public class TaskModiReqImpl implements ITaskModiReqService {
     TaskRepository taskRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private  UserServiceImp userServiceImp;
 
 
     public TaskModiReqImpl(TaskModificationRequestRepository taskModificationRequestRepository,TaskRepository taskRepository, ModelMapper modelMapper,
-                           UserRepository userRepository) {
+                           UserRepository userRepository, UserServiceImp userServiceImp) {
         this.taskRepository = taskRepository;
         this.taskModificationRequestRepository = taskModificationRequestRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
+        this.userServiceImp = userServiceImp;
     }
     @Override
+    @Transactional
     public TaskModiReqResponseDto creatDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException {
-        Task task =   taskModiReqRequestDto.getOriginalTask();
-        Task originalTask = taskRepository.getReferenceById(task.getId());
+        Task originalTask = taskRepository.findById(taskModiReqRequestDto.getOriginalTask().getId()).get();
         Task newTask = taskRepository.getReferenceById(taskModiReqRequestDto.getNewTask().getId());
-        User AssignedToUser = originalTask.getAssignedToUser();
-        User userAssignedThisTask = originalTask.getAssignedToUser();
+        User userWithThisTask = userServiceImp.getUserById(taskModiReqRequestDto.getRequestingUser().id());
 
-        AssignedToUser.decrementTokensForTaskModification();
+        boolean cantMakeRequest = !userWithThisTask.canMakeRequestForModification();
+        boolean isReplaced = newTask.isReplaced();
+        if (cantMakeRequest) {
+            throw new ServerException("->you can do just tow modification request per day");
+        }
+        if (isReplaced) {
+            throw new ServerException("->you can't make modification request, this task is already replaced");
+        }
 
-        boolean b = AssignedToUser.canMakeRequestForModification();
-        boolean b1 = userAssignedThisTask.isManager();
-        boolean b2 = !newTask.isReplaced();
-
-        if (b && b1 && b2) {
         TaskModificationRequest taskModificationRequest = new TaskModificationRequest();
 
-            taskModificationRequest.setOriginalTask(originalTask);
-            taskModificationRequest.setNewTask(newTask);
-            taskModificationRequest.setRequestingUser(AssignedToUser);
-            taskModificationRequest.setRequestDate(java.time.LocalDateTime.now());
+        taskModificationRequest.setOriginalTask(originalTask);
+        taskModificationRequest.setNewTask(newTask);
+        taskModificationRequest.setRequestingUser(userWithThisTask);
+        taskModificationRequest.setRequestDate(java.time.LocalDateTime.now());
 
-            TaskModificationRequest taskModificationRequest1 = taskModificationRequestRepository.save(taskModificationRequest);
-            AssignedToUser.updateModificationRequestDate();
+        TaskModificationRequest taskModificationRequest1 = taskModificationRequestRepository.save(taskModificationRequest);
+
+        userWithThisTask.updateModificationRequestDate();
+        userWithThisTask.decrementTokensForTaskModification();
+        userRepository.save(userWithThisTask);
 
         return modelMapper.map(taskModificationRequest1, TaskModiReqResponseDto.class);
-        }else {
-            throw new ServerException("wrong with modification request");
-        }
     }
 
     @Override

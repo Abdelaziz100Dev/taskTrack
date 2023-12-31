@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 @Data
 public class TaskModiReqResponseDto {
 
-    private Task originalTask;
-    private Task newTask;
+    private TaskResponseDto originalTask;
+    private TaskResponseDto newTask;
     private boolean managerApproval;
     private LocalDateTime requestDate;
 }

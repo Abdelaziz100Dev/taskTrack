@@ -13,6 +13,7 @@ public class ErrorResponseFormat {
 
     private  LocalDateTime timestamp;
     private  String message;
+    private  String status;
     private  String path;
     private  Map<String, List<String>> details;
 

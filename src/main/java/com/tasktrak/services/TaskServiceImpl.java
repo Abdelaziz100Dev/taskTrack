@@ -2,13 +2,16 @@ package com.tasktrak.services;
 
 import com.tasktrak.entities.Task;
 import com.tasktrak.entities.User;
+import com.tasktrak.enums.TaskStatus;
 import com.tasktrak.repositories.TaskModificationRequestRepository;
 import com.tasktrak.repositories.TaskRepository;
 import com.tasktrak.repositories.UserRepository;
 import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
 import com.tasktrak.services.dto.dtoResponse.UserAndTasksDto;
+import com.tasktrak.services.dto.dtoResponse.UserDto;
 import com.tasktrak.services.interfaces.ITaskService;
+import com.tasktrak.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements ITaskService {
@@ -26,34 +30,39 @@ public class TaskServiceImpl implements ITaskService {
     private TaskRepository taskRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
+    private final UserService userService;
 
-    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper,
-                           UserRepository userRepository,TaskModificationRequestRepository taskModificationRequestRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository,
+                           ModelMapper modelMapper,
+                           UserRepository userRepository,
+                           TaskModificationRequestRepository taskModificationRequestRepository,
+                           UserService userService) {
+
         this.taskRepository = taskRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.taskModificationRequestRepository = taskModificationRequestRepository;
+        this.userService = userService;
     }
     @Override
     public TaskResponseDto addTask(TaskRequestDto taskRequestDto) {
         validation(taskRequestDto);
         Task taskEntity = modelMapper.map(taskRequestDto, Task.class);
-
         return modelMapper.map(taskRepository.save(taskEntity), TaskResponseDto.class) ;
     }
 
     private void validation(TaskRequestDto taskRequestDto) {
         if (taskRequestDto.getCreationDate().isBefore(taskRequestDto.getDueDate())) throw new IllegalArgumentException("Due date must be after creation date");
         if (taskRequestDto.getCreationDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Creation date should not be in the past");
-        if (taskRequestDto.getTags().size() < 2) throw new IllegalArgumentException("At least one tag is required");
-        if (!shedulingDateIsLessthenThreeDays(taskRequestDto.getCreationDate(), taskRequestDto.getDueDate())) throw new IllegalArgumentException("Due date must be at least 3 days after creation date");
+        if (taskRequestDto.getTags().size() < 2) throw new IllegalArgumentException("At least tow tags is required");
+        if (schedulingDateIsGraterThenThreeDays(taskRequestDto.getStartDate())) throw new IllegalArgumentException("StartDate should be less then 3 days from today");
     }
 
     @Override
     public String markTaskAsDone(Long id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Task not found"));
        if (task.getDueDate().isBefore(LocalDate.now())) throw new IllegalArgumentException("Task is overdue");
-        task.setCompleted(true);
+        task.setStatus(TaskStatus.DONE);
         taskRepository.save(task);
         return "Task marked as done" ;
     }
@@ -89,30 +98,66 @@ public class TaskServiceImpl implements ITaskService {
 
     }
 
-    private boolean shedulingDateIsLessthenThreeDays(LocalDate creationDate, LocalDate dueDate) {
-        return dueDate.minusDays(3).isBefore(creationDate);
+    private boolean schedulingDateIsGraterThenThreeDays(LocalDate startDate) {
+        return startDate.minusDays(3).isAfter(LocalDate.now()) || startDate.minusDays(3).isEqual(LocalDate.now());
     }
     @Override
     public List<UserAndTasksDto> getTasksForManager(User user){
-        User user1 = userRepository.findById(user.getId()).orElseThrow(()-> new IllegalArgumentException("not found"));
-//        boolean b = user1.isManager();
-//     List<Task> tasksList = new ArrayList<>();
-//     List<User> usersList = new ArrayList<>();
-//        usersList.add( user1.getUsers());
-//                     .stream()
-//                .forEach(u->{
-////                    List<User> usersList = new ArrayList<>();
-//                    usersList.add(u);
-////                    List<Task> tasksList = new ArrayList<>();
-//                     u.getHisTasks().stream().forEach(t-> tasksList.add(t));});
+        User user1 = userRepository.findById(user.getId()).orElseThrow(()-> new IllegalArgumentException("Manager not found"));
 
         if (user1.isManager()) {
-            List<UserAndTasksDto> userAndListDtos = new ArrayList<>();
-            user1.getUsers()
-                    .stream()
-                    .forEach(u -> userAndListDtos.add(modelMapper.map(u, UserAndTasksDto.class)));
-            return userAndListDtos;
-        }else throw new IllegalArgumentException("not allowed");
+            List<UserAndTasksDto> userAndTasksDtoList = new ArrayList<>();
+            List<User> employees = user1.getUsers();
 
+            employees.stream().forEach(employee -> {
+                List<List<Task>> listOfListTasks =new ArrayList<>();
+                List<Task> tasks1 = employee.getHisTasks();
+                listOfListTasks.add(tasks1);
+                listOfListTasks.stream().forEach(tasks->{
+
+//              List<Task> tasks = employee.getHisTasks();
+                // Filter tasks by week, month, and year as needed
+                LocalDate now = LocalDate.now();
+                List<Task> tasksThisWeek = filterTasksByDate(tasks, now.minusDays(now.getDayOfWeek().getValue() - 1), now.plusDays(7));
+                List<Task> tasksThisMonth = filterTasksByDate(tasks, now.withDayOfMonth(1), now.plusMonths(1).withDayOfMonth(1).minusDays(1));
+                List<Task> tasksThisYear = filterTasksByDate(tasks, now.withDayOfYear(1), now.plusYears(1).withDayOfYear(1).minusDays(1));
+
+                double completionPercentageThisWeek = calculateCompletionPercentage(tasksThisWeek);
+                double completionPercentageThisMonth = calculateCompletionPercentage(tasksThisMonth);
+                double completionPercentageThisYear = calculateCompletionPercentage(tasksThisYear);
+
+                int tokensUsed = calculateTokensUsedByUsed(employee);
+
+                UserAndTasksDto userAndTasksDto = new UserAndTasksDto();
+                userAndTasksDto.setUser(modelMapper.map(employee, UserDto.class));
+                userAndTasksDto.setCompletionPercentageThisWeek(completionPercentageThisWeek);
+                userAndTasksDto.setCompletionPercentageThisMonth(completionPercentageThisMonth);
+                userAndTasksDto.setCompletionPercentageThisYear(completionPercentageThisYear);
+                userAndTasksDto.setTokensUsed(tokensUsed);
+
+                userAndTasksDtoList.add(userAndTasksDto);
+                });
+            });
+
+            return userAndTasksDtoList;
+        }
+        else {
+            throw new IllegalArgumentException("User is not a manager");
+        }
     }
+
+    private List<Task> filterTasksByDate(List<Task> tasks, LocalDate startDate, LocalDate endDate) {
+        return tasks.stream()
+                .filter(task -> task.getDueDate().isAfter(startDate) && task.getDueDate().isBefore(endDate))
+                .collect(Collectors.toList());
+    }
+
+    private double calculateCompletionPercentage(List<Task> tasks) {
+        long totalTasks = tasks.size();
+        long completedTasks = tasks.stream().filter(Task::isCompleted).count();
+
+        return totalTasks == 0 ? 0.0 : (double) completedTasks / totalTasks * 100.0;
+    }
+
+    private int calculateTokensUsedByUsed(User user) {return user.getTokensUsed();}
 }

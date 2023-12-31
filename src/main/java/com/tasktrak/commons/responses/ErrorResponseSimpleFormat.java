@@ -12,7 +12,7 @@ public class ErrorResponseSimpleFormat {
 
     private  LocalDateTime timestamp;
     private  String message;
-    private  List<String> details;
     private  String path;
     private String status;
+    private  List<String> details;
 }

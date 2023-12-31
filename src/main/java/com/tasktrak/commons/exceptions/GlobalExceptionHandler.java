@@ -13,12 +13,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.net.ConnectException;
+import java.rmi.ServerException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//@RestControllerAdvice
-
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
 
@@ -85,6 +85,7 @@ public class GlobalExceptionHandler {
         errorSimpleResponse.setMessage("Illegal Argument Exception");
         errorSimpleResponse.setDetails(Arrays.asList(exception.getMessage().split(";")));
         errorSimpleResponse.setPath(request.getRequestURI());
+        errorResponse.setStatus("500");
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorSimpleResponse);
     }
@@ -95,6 +96,18 @@ public class GlobalExceptionHandler {
 
         // You can customize the response message and HTTP status based on your requirements
         return new ResponseEntity<>("Unable to connect to the database.", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(ServerException.class)
+    public ResponseEntity<ErrorResponseSimpleFormat> handleServerException(
+            ServerException exception, HttpServletRequest request) {
+
+        errorSimpleResponse.setTimestamp(LocalDateTime.now());
+        errorSimpleResponse.setMessage("Server Exception");
+        errorSimpleResponse.setDetails(Arrays.asList(exception.getMessage().split(";")));
+        errorSimpleResponse.setPath(request.getRequestURI());
+        errorResponse.setStatus("500");
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorSimpleResponse);
     }
 
 }

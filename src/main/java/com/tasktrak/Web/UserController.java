@@ -1,4 +1,4 @@
-package com.tasktrak.controllers;
+package com.tasktrak.Web;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

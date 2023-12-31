@@ -1,16 +1,16 @@
 package com.tasktrak.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,17 +21,21 @@ public class User {
     private Long id;
 
     private String username;
-    private int tokensForTaskModification;
-    private int tokensForTaskDeletion;
+    private Integer tokensForTaskModification;
+    private Integer tokensForTaskDeletion;
+    private Integer tokensUsed;
 
     private LocalDate lastModificationRequsetDate;
     private LocalDate lastDeletionDate;
 
-    private boolean isManager;
+    private Boolean isManager;
+
+
     @ManyToOne
+    @JoinColumn(name="manager_id", nullable=true)
     private User manager;
 
-    @OneToMany
+    @OneToMany(mappedBy="manager")
     private List<User> users;
 
     @OneToMany(mappedBy = "assignedToUser")
@@ -46,9 +50,11 @@ public class User {
 
     public void decrementTokensForTaskModification() {
         this.tokensForTaskModification--;
+        this.tokensUsed++;
     }
     public void decrementTokensForTaskDeletion() {
         this.tokensForTaskDeletion--;
+        this.tokensUsed++;
     }
 
     public boolean canMakeRequestForModification() {
@@ -75,6 +81,23 @@ public class User {
     public void doubleTheModificationTokensStock(){
         this.setTokensForTaskModification(2);
 
+    }
+@JsonManagedReference
+    public List<Task> getHisTasks() {
+        return hisTasks;
+    }
+
+    @JsonBackReference
+    public User getManager() {
+        return manager;
+    }
+    @JsonManagedReference
+    public List<User> getUsers() {
+        return users;
+    }
+
+    public boolean isManager() {
+        return isManager;
     }
 
 }

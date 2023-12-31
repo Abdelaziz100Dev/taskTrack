@@ -7,6 +7,11 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class UserAndTasksDto {
-    private User user;
+    private UserDto user;
+    private double completionPercentageThisWeek;
+    private double completionPercentageThisMonth;
+    private  double completionPercentageThisYear;
+    private int tokensUsed;
     private List<Task> tasks;
+
 }
