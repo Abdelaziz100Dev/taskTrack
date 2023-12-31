@@ -39,7 +39,7 @@ public class User {
     private List<User> users;
 
     @OneToMany(mappedBy = "assignedToUser")
-    private List<Task> hisTasks;
+    private List<Task> assignedTasks;
 
     public void updateModificationRequestDate() {
         this.lastModificationRequsetDate = LocalDate.now();
@@ -79,12 +79,12 @@ public class User {
         return tokensForTaskDeletion > 0;
     }
     public void doubleTheModificationTokensStock(){
-        this.setTokensForTaskModification(2);
+        this.setTokensForTaskModification(4);
 
     }
-@JsonManagedReference
+    @JsonManagedReference
     public List<Task> getHisTasks() {
-        return hisTasks;
+        return assignedTasks;
     }
 
     @JsonBackReference

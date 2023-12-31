@@ -2,13 +2,12 @@ package com.tasktrak.services.interfaces;
 
 import com.tasktrak.services.dto.dtoRequest.TaskModiReqRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskModiReqResponseDto;
-import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
+import org.springframework.http.ResponseEntity;
 
 import java.rmi.ServerException;
 
 public interface ITaskModiReqService {
 
-    TaskModiReqResponseDto creatDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException;
-
-    void acceptDemend(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException;
+    TaskModiReqResponseDto createModificationRequest(TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException;
+    ResponseEntity<String> acceptModificationRequest(Long id) throws ServerException;
 }

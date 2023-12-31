@@ -47,12 +47,13 @@ public class Task {
     @ManyToOne
     private User createdByUser;
 
-    public boolean isOverdue(){
+    public boolean isOverdue() {
         LocalDate today = LocalDate.now();
-        return today.isAfter(this.dueDate) && ! this.status.equals(TaskStatus.DONE);
+        return today.isAfter(this.dueDate) && !this.status.equals(TaskStatus.DONE);
     }
-    public void setNotComplete(){
-       this.status = TaskStatus.TODO;
+
+    public void setNotComplete() {
+        this.status = TaskStatus.TODO;
 
     }
 
@@ -60,10 +61,12 @@ public class Task {
     public User getAssignedByUser() {
         return assignedByUser;
     }
+
     @JsonBackReference
     public User getAssignedToUser() {
         return assignedToUser;
     }
+
     @JsonManagedReference
     public Set<String> getTags() {
         return tags;
