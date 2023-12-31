@@ -28,7 +28,7 @@ public class Task {
     private LocalDate startDate;
     private LocalDate dueDate;
 
-    private boolean completed;
+
     private boolean replaced;
 
     @Enumerated(EnumType.STRING)
@@ -49,10 +49,10 @@ public class Task {
 
     public boolean isOverdue(){
         LocalDate today = LocalDate.now();
-        return today.isAfter(this.dueDate) && !completed;
+        return today.isAfter(this.dueDate) && ! this.status.equals(TaskStatus.DONE);
     }
     public void setNotComplete(){
-        this.completed = false;
+       this.status = TaskStatus.TODO;
 
     }
 
@@ -68,4 +68,6 @@ public class Task {
     public Set<String> getTags() {
         return tags;
     }
+
+
 }

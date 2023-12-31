@@ -22,17 +22,17 @@ public class MapperConfig {
         return Objects.isNull(source) ? null : modelMapper().map(source, targetClass);
     }
 
-    public TaskRequestDto convertToDto(Task task) {
-        TaskRequestDto taskRequestDto = TaskRequestDto.builder()
-                .title(task.getTitle())
-                .description(task.getDescription())
-                .creationDate(task.getCreationDate())
-                .dueDate(task.getDueDate())
-                .completed(task.isCompleted())
-                .tags(task.getTags())
-                .build();
-        return taskRequestDto;
-    }
+//    public TaskRequestDto convertToDto(Task task) {
+//        TaskRequestDto taskRequestDto = TaskRequestDto.builder()
+//                .title(task.getTitle())
+//                .description(task.getDescription())
+//                .creationDate(task.getCreationDate())
+//                .dueDate(task.getDueDate())
+//                .completed(task.isCompleted())
+//                .tags(task.getTags())
+//                .build();
+//        return taskRequestDto;
+//    }
 //    public Task convertToEntity(TaskRequestDto taskRequestDto) {
 //        return modelMapper().map(taskRequestDto, TaskResponceDto.class);
 //    }
