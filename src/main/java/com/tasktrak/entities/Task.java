@@ -53,7 +53,7 @@ public class Task {
     }
 
     public void setNotComplete() {
-        this.status = TaskStatus.TODO;
+        this.status = TaskStatus.OVERDUE;
 
     }
 
