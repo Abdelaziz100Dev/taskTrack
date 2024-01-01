@@ -1,4 +1,4 @@
-package com.tasktrak.Web;
+package com.tasktrak.web;
 
 import com.tasktrak.entities.User;
 import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;

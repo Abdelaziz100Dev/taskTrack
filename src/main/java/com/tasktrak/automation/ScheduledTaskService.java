@@ -26,24 +26,24 @@ public class ScheduledTaskService {
         this.userRepository = userRepository;
         this.taskModificationRequestRepository = taskModificationRequestRepository;
     }
-    @Scheduled(fixedRate = 200_000) //  43_200_000 Run every 12 hours (12 * 60 * 60 * 1000 milliseconds)
-    public void simulateDailyTasks() {
-        taskModificationRequestRepository.findAll().stream()
-                .filter(r-> Duration.between(r.getRequestDate(), LocalDateTime.now()).toHours() > 2)
-                .forEach(r ->{
-                    r.getRequestingUser().doubleTheModificationTokensStock();
-                    userRepository.save(r.getRequestingUser());
-                });
-        System.out.println("-------------- Daily task simulation is running");
-    }
-
-    @Scheduled(fixedRate = 5_000) // Run every 24 hours (24 * 60 * 60 * 1000 milliseconds)
-    public void markOverdueTasksAsNotCompleted() {
-        taskRepository.findAll().stream()
-                .filter(t-> t.isOverdue())
-                .forEach(t->{
-                    t.setNotComplete();
-                    taskRepository.save(t);});
-        System.out.println("-------------- overdue task simulation is running");
-    }
+//    @Scheduled(fixedRate = 200_000) //  43_200_000 Run every 12 hours (12 * 60 * 60 * 1000 milliseconds)
+//    public void simulateDailyTasks() {
+//        taskModificationRequestRepository.findAll().stream()
+//                .filter(r-> Duration.between(r.getRequestDate(), LocalDateTime.now()).toHours() > 2)
+//                .forEach(r ->{
+//                    r.getRequestingUser().doubleTheModificationTokensStock();
+//                    userRepository.save(r.getRequestingUser());
+//                });
+//        System.out.println("-------------- Daily task simulation is running");
+//    }
+//
+//    @Scheduled(fixedRate = 5_000) // 86_200_000 Run every 24 hours (24 * 60 * 60 * 1000 milliseconds)
+//    public void markOverdueTasksAsNotCompleted() {
+//        taskRepository.findAll().stream()
+//                .filter(t-> t.isOverdue())
+//                .forEach(t->{
+//                    t.setNotComplete();
+//                    taskRepository.save(t);});
+//        System.out.println("-------------- overdue task simulation is running");
+//    }
 }

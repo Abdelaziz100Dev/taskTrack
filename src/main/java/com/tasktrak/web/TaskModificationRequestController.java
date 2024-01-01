@@ -1,4 +1,4 @@
-package com.tasktrak.Web;
+package com.tasktrak.web;
 
 import com.tasktrak.services.dto.dtoRequest.TaskModiReqRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskModiReqResponseDto;
@@ -14,8 +14,8 @@ import java.rmi.ServerException;
 public class TaskModificationRequestController {
 
     private final ITaskModiReqService taskModiReqService;
-    public TaskModificationRequestController(ITaskModiReqService TaskModiReqService) {
-        this.taskModiReqService = TaskModiReqService;
+    public TaskModificationRequestController(ITaskModiReqService taskModiReqService) {
+        this.taskModiReqService = taskModiReqService;
     }
     @PostMapping("/modificationRequest")
     public ResponseEntity<TaskModiReqResponseDto> modificationRequest(@RequestBody TaskModiReqRequestDto taskModiReqRequestDto) throws ServerException {

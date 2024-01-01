@@ -11,9 +11,7 @@ import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
 import com.tasktrak.services.dto.dtoResponse.UserAndTasksDto;
 import com.tasktrak.services.dto.dtoResponse.UserDto;
 import com.tasktrak.services.interfaces.ITaskService;
-import com.tasktrak.services.interfaces.UserService;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TaskServiceImpl implements ITaskService {
@@ -30,15 +27,14 @@ public class TaskServiceImpl implements ITaskService {
     private TaskRepository taskRepository;
     private final ModelMapper modelMapper;
     private final UserRepository userRepository;
-    private final UserService userService;
 
-    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper, UserRepository userRepository, TaskModificationRequestRepository taskModificationRequestRepository, UserService userService) {
+
+    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper, UserRepository userRepository, TaskModificationRequestRepository taskModificationRequestRepository) {
 
         this.taskRepository = taskRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.taskModificationRequestRepository = taskModificationRequestRepository;
-        this.userService = userService;
     }
 
     @Override
@@ -71,15 +67,15 @@ public class TaskServiceImpl implements ITaskService {
     public ResponseEntity<String> deleteTask(Long id) {
         verifyIfTaskCanBeDeleted(id);
         Task task = taskRepository.findById(id).get();
-        User AssignedToUser = task.getAssignedToUser();
+        User assignedToUser = task.getAssignedToUser();
 
         try {
             if (!task.getAssignedByUser().isManager()) taskRepository.deleteById(id);
             if (task.getAssignedByUser().isManager()) {
                 taskRepository.deleteById(id);
-                AssignedToUser.decrementTokensForTaskDeletion();
-                AssignedToUser.updateDeletionRequestDate();
-                userRepository.save(AssignedToUser);
+                assignedToUser.decrementTokensForTaskDeletion();
+                assignedToUser.updateDeletionRequestDate();
+                userRepository.save(assignedToUser);
             }
 
             return ResponseEntity.status(HttpStatus.OK).body("Task deleted successfully");
@@ -118,7 +114,7 @@ public class TaskServiceImpl implements ITaskService {
 //              List<Task> tasks = employee.getHisTasks();
                     // Filter tasks by week, month, and year as needed
                     LocalDate now = LocalDate.now();
-                    List<Task> tasksThisWeek = filterTasksByDate(tasks, now.minusDays(now.getDayOfWeek().getValue() - 1), now.plusDays(7));
+                    List<Task> tasksThisWeek = filterTasksByDate(tasks, now.minusDays(now.getDayOfWeek().getValue() - 1L), now.plusDays(7));
                     List<Task> tasksThisMonth = filterTasksByDate(tasks, now.withDayOfMonth(1), now.plusMonths(1).withDayOfMonth(1).minusDays(1));
                     List<Task> tasksThisYear = filterTasksByDate(tasks, now.withDayOfYear(1), now.plusYears(1).withDayOfYear(1).minusDays(1));
 
@@ -146,7 +142,7 @@ public class TaskServiceImpl implements ITaskService {
     }
 
     private List<Task> filterTasksByDate(List<Task> tasks, LocalDate startDate, LocalDate endDate) {
-        return tasks.stream().filter(task -> task.getDueDate().isAfter(startDate) && task.getDueDate().isBefore(endDate)).collect(Collectors.toList());
+        return tasks.stream().filter(task -> task.getDueDate().isAfter(startDate) && task.getDueDate().isBefore(endDate)).toList();
     }
 
     private double calculateCompletionPercentage(List<Task> tasks) {
