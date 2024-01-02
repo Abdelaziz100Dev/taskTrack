@@ -10,8 +10,8 @@
 //        Le manager ne peut pas laisser une tâche sans être affecté. Si le manager modifie une tâche, la tâche sera intacte. *
 //        Si le manager n'as pas répondu à une demande de changement de tâches dans un délai de 12 heurs, l'utilisateur doit bénéficier le lendemain d'un solde de jeton de modification en double (4 jetons)*
 //        Si une tâche dépasse la date limite automatiquement elle se transforme en non done : tous les 24 heures*
-//        uml
-//        deployment jar file.
+//        uml*
+//        deployment jar file.*
 //        add SonarQube *
 //        add MappStruct *
 //        Unit testing

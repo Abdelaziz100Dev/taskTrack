@@ -1,0 +1,227 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1704216992323-1
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_task
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: title
+                  type: VARCHAR(255)
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+              - column:
+                  name: creation_date
+                  type: DATE
+              - column:
+                  name: start_date
+                  type: DATE
+              - column:
+                  name: due_date
+                  type: DATE
+              - column:
+                  constraints:
+                    nullable: false
+                  name: replaced
+                  type: BOOLEAN
+              - column:
+                  name: status
+                  type: VARCHAR(255)
+              - column:
+                  name: assigned_by_user_id
+                  type: BIGINT
+              - column:
+                  name: assigned_to_user_id
+                  type: BIGINT
+              - column:
+                  name: created_by_user_id
+                  type: BIGINT
+            tableName: task
+  - changeSet:
+      id: 1704216992323-2
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_taskmodificationrequest
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: original_task_id
+                  type: BIGINT
+              - column:
+                  name: new_task_id
+                  type: BIGINT
+              - column:
+                  name: requesting_user_id
+                  type: BIGINT
+              - column:
+                  constraints:
+                    nullable: false
+                  name: accepted
+                  type: BOOLEAN
+              - column:
+                  name: request_date
+                  type: DATETIME
+            tableName: task_modification_request
+  - changeSet:
+      id: 1704216992323-3
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                  name: task_id
+                  type: BIGINT
+              - column:
+                  name: tags
+                  type: VARCHAR(255)
+            tableName: task_tags
+  - changeSet:
+      id: 1704216992323-4
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_user
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+              - column:
+                  name: tokens_for_task_modification
+                  type: INT
+              - column:
+                  name: tokens_for_task_deletion
+                  type: INT
+              - column:
+                  name: tokens_used
+                  type: INT
+              - column:
+                  name: last_modification_requset_date
+                  type: DATE
+              - column:
+                  name: last_deletion_date
+                  type: DATE
+              - column:
+                  name: is_manager
+                  type: BOOLEAN
+              - column:
+                  name: manager_id
+                  type: BIGINT
+            tableName: user
+  - changeSet:
+      id: 1704216992323-5
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: new_task_id
+            baseTableName: task_modification_request
+            constraintName: FK_TASKMODIFICATIONREQUEST_ON_NEWTASK
+            referencedColumnNames: id
+            referencedTableName: task
+  - changeSet:
+      id: 1704216992323-6
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: original_task_id
+            baseTableName: task_modification_request
+            constraintName: FK_TASKMODIFICATIONREQUEST_ON_ORIGINALTASK
+            referencedColumnNames: id
+            referencedTableName: task
+  - changeSet:
+      id: 1704216992323-7
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: requesting_user_id
+            baseTableName: task_modification_request
+            constraintName: FK_TASKMODIFICATIONREQUEST_ON_REQUESTINGUSER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1704216992323-8
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: assigned_by_user_id
+            baseTableName: task
+            constraintName: FK_TASK_ON_ASSIGNEDBYUSER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1704216992323-9
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: assigned_to_user_id
+            baseTableName: task
+            constraintName: FK_TASK_ON_ASSIGNEDTOUSER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1704216992323-10
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: created_by_user_id
+            baseTableName: task
+            constraintName: FK_TASK_ON_CREATEDBYUSER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1704216992323-11
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: manager_id
+            baseTableName: user
+            constraintName: FK_USER_ON_MANAGER
+            referencedColumnNames: id
+            referencedTableName: user
+  - changeSet:
+      id: 1704216992323-12
+      author: abdelaziz (generated)
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: task_id
+            baseTableName: task_tags
+            constraintName: fk_task_tags_on_task
+            referencedColumnNames: id
+            referencedTableName: task
+
