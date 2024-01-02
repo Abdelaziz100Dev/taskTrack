@@ -3,6 +3,7 @@ package com.tasktrak.services;
 import com.tasktrak.entities.Task;
 import com.tasktrak.entities.User;
 import com.tasktrak.enums.TaskStatus;
+import com.tasktrak.mappers.MapperStruct;
 import com.tasktrak.repositories.TaskModificationRequestRepository;
 import com.tasktrak.repositories.TaskRepository;
 import com.tasktrak.repositories.UserRepository;
@@ -26,21 +27,23 @@ public class TaskServiceImpl implements ITaskService {
 
     private TaskRepository taskRepository;
     private final ModelMapper modelMapper;
+    private final MapperStruct mapperStruct;
     private final UserRepository userRepository;
 
 
-    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper, UserRepository userRepository, TaskModificationRequestRepository taskModificationRequestRepository) {
+    public TaskServiceImpl(TaskRepository taskRepository, ModelMapper modelMapper, UserRepository userRepository, TaskModificationRequestRepository taskModificationRequestRepository, MapperStruct mapperStruct) {
 
         this.taskRepository = taskRepository;
         this.modelMapper = modelMapper;
         this.userRepository = userRepository;
         this.taskModificationRequestRepository = taskModificationRequestRepository;
+        this.mapperStruct = mapperStruct;
     }
 
     @Override
     public TaskResponseDto addTask(TaskRequestDto taskRequestDto) {
         validation(taskRequestDto);
-        Task taskEntity = modelMapper.map(taskRequestDto, Task.class);
+        Task taskEntity = mapperStruct.toTaskRequestEntity(taskRequestDto);
         return modelMapper.map(taskRepository.save(taskEntity), TaskResponseDto.class);
     }
 

@@ -21,7 +21,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class TaskRequestDto{
     private UserDto createdByUser;
-    private User assignedByUser;
+    private UserDto assignedByUser;
     private TaskStatus status = TaskStatus.TODO;
 
     private String title;
