@@ -11,14 +11,17 @@
 //        Si le manager n'as pas répondu à une demande de changement de tâches dans un délai de 12 heurs, l'utilisateur doit bénéficier le lendemain d'un solde de jeton de modification en double (4 jetons)*
 //        Si une tâche dépasse la date limite automatiquement elle se transforme en non done : tous les 24 heures*
 //        uml
-//        deployment jar file
+//        deployment jar file.
 //        add SonarQube *
 //        add MappStruct *
-//        testing
+//        Unit testing
+//        liquibase
 //        add Spring Security(JWT)
 //        add Spring Security
+//  maven package then: cd target then: java -jar .\tasktrack-0.0.1-SNAPSHOT.jar
 
-//                                 to start sonarqube   > cd C:\sonarqube\bin\windows-x86-64
+//                                ----- to start sonarqube -------
+//                                 > cd C:\sonarqube\bin\windows-x86-64
 //                                                      > ./StartSonar.bat
 // then go to http://localhost:9000/projects
 //  to start sonar-scanner, cd to project then run this > C:\sonar-scanner-5.0.1.3006-windows\bin/sonar-scanner.bat

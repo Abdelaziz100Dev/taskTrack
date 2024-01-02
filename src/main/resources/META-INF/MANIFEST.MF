@@ -1,0 +1,30 @@
+Manifest-Version: 1.0
+Main-Class: com.tasktrak.TaskTrackApplication
+Class-Path: aspectjweaver-1.9.21.jar spring-orm-6.1.2.jar jackson-dataty
+ pe-jsr310-2.15.3.jar antlr4-runtime-4.13.0.jar log4j-api-2.21.1.jar jak
+ arta.inject-api-2.0.1.jar HikariCP-5.0.1.jar hibernate-commons-annotati
+ ons-6.0.6.Final.jar spring-data-commons-3.2.1.jar jakarta.persistence-a
+ pi-3.1.0.jar micrometer-commons-1.12.1.jar spring-boot-starter-data-jpa
+ -3.2.1.jar jandex-3.1.2.jar spring-expression-6.1.2.jar spring-boot-sta
+ rter-jdbc-3.2.1.jar tomcat-embed-core-10.1.17.jar spring-webmvc-6.1.2.j
+ ar spring-data-jpa-3.2.1.jar logback-core-1.4.14.jar spring-boot-3.2.1.
+ jar byte-buddy-1.14.10.jar txw2-4.0.4.jar jul-to-slf4j-2.0.9.jar tomcat
+ -embed-el-10.1.17.jar spring-boot-starter-json-3.2.1.jar jaxb-core-4.0.
+ 4.jar istack-commons-runtime-4.1.2.jar jakarta.xml.bind-api-4.0.1.jar j
+ ackson-core-2.15.3.jar micrometer-observation-1.12.1.jar mysql-connecto
+ r-j-8.1.0.jar spring-boot-starter-aop-3.2.1.jar spring-boot-starter-log
+ ging-3.2.1.jar jaxb-runtime-4.0.4.jar jackson-module-parameter-names-2.
+ 15.3.jar spring-aspects-6.1.2.jar spring-boot-starter-tomcat-3.2.1.jar 
+ jakarta.activation-api-2.1.2.jar mapstruct-1.5.5.Final.jar tomcat-embed
+ -websocket-10.1.17.jar jakarta.transaction-api-2.0.1.jar spring-context
+ -6.1.2.jar spring-jdbc-6.1.2.jar jackson-datatype-jdk8-2.15.3.jar snake
+ yaml-2.2.jar spring-core-6.1.2.jar spring-aop-6.1.2.jar spring-boot-aut
+ oconfigure-3.2.1.jar jakarta.annotation-api-2.1.1.jar logback-classic-1
+ .4.14.jar spring-jcl-6.1.2.jar modelmapper-3.0.0.jar angus-activation-2
+ .0.1.jar lombok-1.18.30.jar log4j-to-slf4j-2.21.1.jar spring-web-6.1.2.
+ jar spring-tx-6.1.2.jar slf4j-api-2.0.9.jar classmate-1.6.0.jar jboss-l
+ ogging-3.5.3.Final.jar spring-boot-starter-3.2.1.jar jackson-databind-2
+ .15.3.jar spring-boot-devtools-3.2.1.jar hibernate-core-6.4.1.Final.jar
+  jackson-annotations-2.15.3.jar spring-boot-starter-web-3.2.1.jar sprin
+ g-beans-6.1.2.jar
+
