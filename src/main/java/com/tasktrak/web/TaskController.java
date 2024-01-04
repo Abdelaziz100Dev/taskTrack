@@ -4,7 +4,9 @@ import com.tasktrak.entities.User;
 import com.tasktrak.services.dto.dtoRequest.TaskRequestDto;
 import com.tasktrak.services.dto.dtoResponse.TaskResponseDto;
 import com.tasktrak.services.dto.dtoResponse.UserAndTasksDto;
+import com.tasktrak.services.dto.dtoResponse.UserDto;
 import com.tasktrak.services.interfaces.ITaskService;
+import jakarta.websocket.server.PathParam;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +38,14 @@ public class TaskController {
         return new ResponseEntity<>(stringResponse, HttpStatus.OK);
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable Long id) {
         return taskService.deleteTask(id);
     }
-    @PostMapping("/myEmploysTasks")
-    public ResponseEntity<List<UserAndTasksDto>> getTasksForManager(@RequestBody User user){
-        return new ResponseEntity<>(taskService.getTasksForManager(user), HttpStatus.OK);
+    @GetMapping("/myEmploysTasks/{id}")
+    public ResponseEntity<List<UserAndTasksDto>> getTasksForManager(@PathVariable Long id){
+        return new ResponseEntity<>(taskService.getTasksForManager(id), HttpStatus.OK);
+//        return null;
     }
 
 }

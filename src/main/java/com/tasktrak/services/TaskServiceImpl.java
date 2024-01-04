@@ -48,10 +48,10 @@ public class TaskServiceImpl implements ITaskService {
     }
 
     private void validation(TaskRequestDto taskRequestDto) {
-        if (taskRequestDto.getCreationDate().isBefore(taskRequestDto.getDueDate()))
+        if (taskRequestDto.getStartDate().isAfter(taskRequestDto.getDueDate()))
             throw new IllegalArgumentException("Due date must be after creation date");
-        if (taskRequestDto.getCreationDate().isBefore(LocalDate.now()))
-            throw new IllegalArgumentException("Creation date should not be in the past");
+        if (taskRequestDto.getStartDate().isBefore(LocalDate.now()))
+            throw new IllegalArgumentException("start date should not be in the past");
         if (taskRequestDto.getTags().size() < 2) throw new IllegalArgumentException("At least tow tags is required");
         if (schedulingDateIsGraterThenThreeDays(taskRequestDto.getStartDate()))
             throw new IllegalArgumentException("StartDate should be less then 3 days from today");
@@ -101,8 +101,8 @@ public class TaskServiceImpl implements ITaskService {
     }
 
     @Override
-    public List<UserAndTasksDto> getTasksForManager(User user) {
-        User user1 = userRepository.findById(user.getId()).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
+    public List<UserAndTasksDto> getTasksForManager(Long managerId) {
+        User user1 = userRepository.findById(managerId).orElseThrow(() -> new IllegalArgumentException("Manager not found"));
 
         if (user1.isManager()) {
             List<UserAndTasksDto> userAndTasksDtoList = new ArrayList<>();

@@ -15,7 +15,8 @@
 //        add SonarQube *
 //        add MappStruct *
 //        Unit testing
-//        liquibase
+//        liquibase *
+//        des requetes sql
 //        add Spring Security(JWT)
 //        add Spring Security
 //  maven package then: cd target then: java -jar .\tasktrack-0.0.1-SNAPSHOT.jar

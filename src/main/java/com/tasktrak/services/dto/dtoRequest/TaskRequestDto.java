@@ -35,37 +35,4 @@ public class TaskRequestDto{
     private Set<String> tags;
 }
 // json for this class:
-// {
-//         "createdByUser": {
-    //         "id": 1,
-    //         "firstName": "string",
-    //         "lastName": "string",
-    //         "email": "string",
-    //         "password": "string",
-    //         "role": "MANAGER",
-    //         "manager": true,
-    //         "tasks": [
-    //         null
-    //         ],
-    //         "assignedTasks": [
-    //         null
-    //         ],
-    //         "assignedByTasks": [
-    //         null
-    //         ],
-    //         "createdTasks": [
-    //         null
-    //         ],
-    //         "taskModificationRequests": [
-    //         null
-    //         ]
-//         },
-    //         "title": "string",
-    //         "description": "string",
-    //         "creationDate": "2021-08-09",
-    //         "dueDate": "2021-08-09",
-    //         "completed": true,
-    //         "tags": [
-    //         "string"
-    //         ]
-//         }
+
