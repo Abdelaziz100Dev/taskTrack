@@ -14,10 +14,14 @@ import {MatButtonModule} from "@angular/material/button";
 import {StoreModule} from "@ngrx/store";
 import {EffectsModule} from "@ngrx/effects";
 import {StoreDevtoolsModule} from "@ngrx/store-devtools";
+import { TasksComponent } from './components/tasks/tasks.component';
+import {taskReducer, TaskState} from "./ngrx/task.reducer";
+import {TasksEffects} from "./ngrx/task.effects";
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TasksComponent
   ],
   imports: [
     BrowserModule,
@@ -33,9 +37,9 @@ import {StoreDevtoolsModule} from "@ngrx/store-devtools";
     MatDialogModule,
     MatButtonModule,
       //Ngrx modules
-      StoreModule.forRoot([]),
-      EffectsModule.forRoot([]),
-      StoreDevtoolsModule.instrument({}) // for debugging purposes only in development mode (remove in production), it gives us a nice UI to see the state of our store
+    StoreModule.forRoot({TaskState:taskReducer}),
+    EffectsModule.forRoot([TasksEffects]),
+    StoreDevtoolsModule.instrument({}) // for debugging purposes only in development mode (remove in production), it gives us a nice UI to see the state of our store
 
   ],
   providers: [],
